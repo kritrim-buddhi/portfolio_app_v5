@@ -334,7 +334,10 @@ FUND_SHORT = {
     "ICICI Pru BSE Sensex Index Fund":       "BSE Sensex",
     "ICICI Pru Nifty Next 50 Index Fund":    "Nifty Next 50",
     "ICICI Pru Nifty Midcap 150 Index Fund": "Nifty Midcap 150",
-    "DSP Small Cap Fund":                    "DSP Small Cap",
+    "Invesco India Smallcap Fund":           "Invesco Smallcap",
+    "Parag Parikh Flexi Cap Fund":           "PPFAS Flexi Cap",
+    "Nippon India Power & Infra Fund":       "Nippon Power & Infra",
+    "ICICI Prudential Gold ETF":             "ICICI Gold ETF",
 }
 
 SOURCE_MAP = {"cas": "📄 CAS", "auto": "📡 Auto", "manual": "✏️ Manual"}
@@ -526,7 +529,7 @@ with tab_today:
     if any_over:
         drift_note = "Some funds are over-invested — their share is being redirected to the ones that need it. No selling required."
     else:
-        drift_note = "All funds are balanced. Your money is split 40-20-20-20 as planned."
+        drift_note = "All funds are balanced. Your portfolio is tracking its target allocation as planned."
 
     if monthly_sip_live == 0 and stp_injection > 0:
         # Migration-only phase: SIP paused, only STP injection being invested
@@ -671,6 +674,18 @@ with tab_port:
     st.caption("The full picture. Each fund's actual weight vs its target.")
 
     # ── Drift visualiser ──────────────────────────────────────────────────────
+    # Shared scale across all funds so target markers and fills are
+    # comparable bar-to-bar — a 25% target sits further right than a 5%
+    # target. A per-fund scale would cancel target_pct out of the target
+    # marker's position, making every marker land at the same spot.
+    # Scale must cover the largest of either target or actual — basing it on
+    # target alone clips any fund whose actual weight overshoots target×1.5
+    # (common right after a reallocation), making it indistinguishable from
+    # a fund that's even more overweight.
+    max_target_w = max(dr.target_pct for dr in drift_results) * 100
+    max_actual_w = max(dr.actual_pct for dr in drift_results) * 100
+    shared_scale = max(max_target_w, max_actual_w) * 1.2
+
     for d in drift_results:
         snap      = next(s for s in snapshots if s["id"] == d.fund_id)
         fname     = short(d.name)
@@ -679,10 +694,8 @@ with tab_port:
         lower_w   = d.lower_bound * 100
         upper_w   = d.upper_bound * 100
 
-        # Normalise bar fill to 0-100 where 100% = upper_bound × 1.5 (for visual room)
-        scale     = upper_w * 1.5
-        fill_w    = min(actual_w / scale * 100, 100)
-        target_x  = target_w / scale * 100
+        fill_w    = min(actual_w / shared_scale * 100, 100)
+        target_x  = target_w / shared_scale * 100
 
         fill_cls  = "over" if d.status == "OVERWEIGHT" else \
                     "under" if d.status == "UNDERWEIGHT" else "ok"

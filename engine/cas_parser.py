@@ -24,12 +24,17 @@ FUND_MATCH_STRINGS = {
     1: "BSE Sensex Index Fund",
     2: "Nifty Next 50 Index Fund",
     3: "Nifty Midcap 150 Index Fund",
-    4: "DSP Small Cap Fund",
+    4: "Invesco India Smallcap",
+    5: "Parag Parikh Flexi Cap",
+    6: "Nippon India Power & Infra",
+    # fund 7 (ICICI Gold ETF) is exchange-traded via demat — not present in MF Central CAS
 }
 
 FUND_AMC_FILTER = {
     2: "ICICI",
     3: "ICICI",
+    4: "Invesco",
+    5: "PPFAS",
 }
 
 

@@ -98,10 +98,13 @@ def initialize_db():
     cur.execute("SELECT COUNT(*) FROM funds")
     if cur.fetchone()[0] == 0:
         seed_funds = [
-            ("ICICI Pru BSE Sensex Index Fund",       "Sensex Index",  0.40, 120716),
+            ("ICICI Pru BSE Sensex Index Fund",       "Sensex Index",  0.15, 120716),
             ("ICICI Pru Nifty Next 50 Index Fund",    "Nifty Next 50", 0.20, 120684),
-            ("ICICI Pru Nifty Midcap 150 Index Fund", "Midcap 150",    0.20, 143492),
-            ("DSP Small Cap Fund",                    "Small Cap",     0.20, 108066),
+            ("ICICI Pru Nifty Midcap 150 Index Fund", "Midcap 150",    0.15, 143492),
+            ("Invesco India Smallcap Fund",            "Small Cap",     0.15, 145137),
+            ("Parag Parikh Flexi Cap Fund",            "Flexi Cap",     0.25, 122639),
+            ("Nippon India Power & Infra Fund",        "Sectoral",      0.05, 118763),
+            ("ICICI Prudential Gold ETF",               "Gold ETF",      0.05, 113076),
         ]
         cur.executemany(
             "INSERT INTO funds (name, asset_class, target_pct, scheme_code) VALUES (?,?,?,?)",
@@ -110,18 +113,13 @@ def initialize_db():
         today = str(date.today())
         cur.executemany(
             "INSERT INTO holdings (fund_id, units, updated_on) VALUES (?,?,?)",
-            [(i+1, 0.0, today) for i in range(4)]
+            [(i+1, 0.0, today) for i in range(7)]
         )
         cur.executemany(
             """INSERT INTO portfolio_snapshots
                (fund_id, recorded_on, current_value, nav, units_at_snap, source)
                VALUES (?,?,?,?,?,?)""",
-            [
-                (1, today,  33949.00, None, None, 'manual'),
-                (2, today,  61721.87, None, None, 'manual'),
-                (3, today,  29086.98, None, None, 'manual'),
-                (4, today,    146.89, None, None, 'manual'),
-            ]
+            [(i+1, today, 0.0, None, None, 'manual') for i in range(7)]
         )
 
     conn.commit()

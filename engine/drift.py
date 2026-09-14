@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from typing import List
 
 
-DEVIATION_THRESHOLD = 0.10   # 10% relative, not absolute
+DEVIATION_THRESHOLD = 0.05   # 5% relative, not absolute
 
 
 @dataclass

@@ -2,14 +2,14 @@
 engine/allocator.py — Monthly SIP Router.
 
 Pure functions. No database. No UI.
-This is where the 40-20-20-20 logic lives, including drift-aware redirection.
+Drift-aware SIP router. Works for any number of funds at any target allocation.
 
 Core question this file answers:
   "Given ₹D_target this month and the current drift state,
    how much exactly goes into each fund?"
 
 Two modes:
-  1. NORMAL: No drift → straight 40/20/20/20 split
+  1. NORMAL: No drift → split proportionally by target_pct
   2. DRIFT-ADJUSTED: Some funds are over/underweight →
      pause inflows to overweight funds and redistribute
      their share to underweight funds proportionally.
